@@ -1,0 +1,20 @@
+#after buying server you should check important performance and change root password and remove ssh key
+
+# check performance
+apt install curl -y && curl -sL yabs.sh | bash -s —  -ig
+
+# check nvme disk
+apt install nvme-cli -y && nvme smart-log /dev/nvme0
+
+# change root password
+passwd root
+exit
+
+# check and remove ssh key
+ls /root/.ssh/
+rm -rf /root/.ssh/authorized_keys
+
+###############################
+Start install
+###############################
+
