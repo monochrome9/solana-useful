@@ -8,6 +8,9 @@ apt install nvme-cli -y && nvme smart-log /dev/nvme0
 
 # change root password
 passwd root
+sudo nano /etc/ssh/sshd_config (PermitRootLogin yes)
+sudo service ssh restart
+systemctl restart ssh || systemctl restart sshd
 exit
 
 # check and remove ssh key
