@@ -19,5 +19,80 @@ Start install
 ###############################
 
 apt-get update && sudo apt-get upgrade -y
-sh -c "$(curl -sSfL https://release.solana.com/v1.10.10/install)"
+sh -c "$(curl -sSfL https://release.solana.com/v1.10.19/install)"
 export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
+
+solana config set --url https://api.mainnet-beta.solana.com
+
+sudo bash -c "cat >/etc/sysctl.d/20-solana-udp-buffers.conf <<EOF
+# Increase UDP buffer size
+net.core.rmem_default = 134217728
+net.core.rmem_max = 134217728
+net.core.wmem_default = 134217728
+net.core.wmem_max = 134217728
+EOF"
+
+sudo sysctl -p /etc/sysctl.d/20-solana-udp-buffers.conf
+
+sudo bash -c "cat >/etc/sysctl.d/20-solana-mmaps.conf <<EOF
+# Increase memory mapped files limit
+vm.max_map_count = 1000000
+EOF"
+
+sudo sysctl -p /etc/sysctl.d/20-solana-mmaps.conf
+
+sudo bash -c "cat >/etc/security/limits.d/90-solana-nofiles.conf <<EOF
+# Increase process file descriptor count limit
+* - nofile 1000000
+EOF"
+
+exit
+
+=========
+
+mkdir solana && cd solana
+
+solana config set --keypair ~/solana/validator-keypair.json
+
+## nano solana.logrotate
+
+/root/solana/solana.log {
+rotate 7
+daily
+missingok
+postrotate
+systemctl kill -s USR1 solana.service
+endscript
+}
+
+scp solana.service
+
+scp validator-keypair.json
+
+ln -s /root/solana/solana.service /etc/systemd/system
+
+ln -s /root/solana/solana.logrotate /etc/logrotate.d/
+
+systemctl daemon-reload
+
+systemctl enable solana.service
+
+=======
+
+swapoff -a
+
+dd if=/dev/zero of=/swapfile bs=1G count=128
+
+chmod 600 /swapfile
+
+mkswap /swapfile
+
+swapon /swapfile
+
+## nano /etc/fstab
+
+/swapfile none swap sw 0 0
+
+========
+
+systemctl start solana.service
