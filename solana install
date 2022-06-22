@@ -22,10 +22,11 @@ Start install
 ###############################
 
 apt-get update && sudo apt-get upgrade -y
-sh -c "$(curl -sSfL https://release.solana.com/v1.10.19/install)"
+sh -c "$(curl -sSfL https://release.solana.com/v1.10.26/install)"
 export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
 
 solana config set --url https://api.mainnet-beta.solana.com
+### solana config set --url https://api.testnet.solana.com
 
 sudo bash -c "cat >/etc/sysctl.d/20-solana-udp-buffers.conf <<EOF
 # Increase UDP buffer size
