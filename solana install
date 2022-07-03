@@ -22,7 +22,7 @@ Start install
 ###############################
 
 apt-get update && sudo apt-get upgrade -y
-sh -c "$(curl -sSfL https://release.solana.com/v1.10.26/install)"
+sh -c "$(curl -sSfL https://release.solana.com/v1.10.28/install)"
 export PATH="/root/.local/share/solana/install/active_release/bin:$PATH"
 
 solana config set --url https://api.mainnet-beta.solana.com
